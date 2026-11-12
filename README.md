@@ -1,19 +1,23 @@
 # AI Customer Insights Copilot
 Live App: https://ai-customer-insights-copilot-cbmyq4gbpdvludcajf5aed.streamlit.app/
 
-Product managers get hundreds of reviews and support tickets. Reading them all takes hours, and patterns get missed. This web app turns a CSV of customer feedback into a ranked list of product problems, backed by real customer quotes, and drafts a one-page PRD for the problem you pick. It also measures its own accuracy against labels a human gives it.
+AI Customer Insights Copilot helps product teams turn unstructured customer feedback into actionable product insights. It analyses customer reviews, identifies recurring issues, prioritises them using configurable scoring criteria, and generates evidence-backed Product Requirement Documents (PRDs).
+
+The application also includes a human-in-the-loop evaluation framework to measure the accuracy of AI-generated classifications against manually labelled reviews.
+
+**Tech Stack:** Python, Streamlit, Google Gemini API, Pandas. This web app turns a CSV of customer feedback into a ranked list of product problems, backed by real customer quotes, and drafts a one-page PRD for the problem you pick. It also measures its own accuracy against labels a human gives it.
 
 Built with Python, Streamlit and the Gemini API.
 
 ## What it does
 
 1. **Upload**: a CSV of 10 to 300 reviews or tickets (a sample of 200 Google Authenticator Play Store reviews is included).
-2. **Theme discovery**: Gemini reads all the feedback and names the recurring problems, each in one of 8 fixed categories (bug, onboarding friction, missing feature, usability, privacy, pricing, praise, other).
+2. **Theme discovery**: Identifies recurring customer pain points through LLM-based theme discovery, each in one of 8 fixed categories (bug, onboarding friction, missing feature, usability, privacy, pricing, praise, other).
 3. **Labelling**: Gemini gives every review a theme, a category, a severity from 1 to 3 and a churn-risk flag, 40 reviews per call.
-4. **Prioritisation**: plain arithmetic, not AI, ranks the problems by frequency, severity and customer impact. You can change the weights.
-5. **Evidence**: click a theme to read the actual reviews behind it.
+4. **Prioritisation**: Ranks identified problems using a configurable, weighted scoring model, ranks the problems by frequency, severity and customer impact. You can change the weights.
+5. **Evidence**: Provides traceability through original customer reviews associated with each theme.
 6. **PRD**: Gemini drafts a one-page PRD for a chosen problem, using only the measured numbers and quotes.
-7. **Accuracy check**: you label 50 reviews yourself; the app reports agreement, Cohen's kappa, per-category precision and recall, and every disagreement.
+7. **Accuracy check**: Evaluates model performance against a manually annotated dataset of 50 reviews; the app reports agreement, Cohen's kappa, per-category precision and recall, and every disagreement.
 
 ## Run it on your laptop
 
@@ -35,7 +39,7 @@ Paste your API key in the sidebar, or copy `.streamlit/secrets.toml.example` to 
 1. Push this folder to a public GitHub repo (never push `secrets.toml`).
 2. After your first real run, click **Download analysis (.json)** on the Priorities tab, save it as `data/sample_analysis.json` and commit it. Visitors can then click **Load demo results** without a key.
 3. Go to https://share.streamlit.io, click **Create app**, pick the repo, branch `main` and file `app.py`, and deploy.
-4. Do not add your key to the cloud secrets. Visitors either load the demo results or paste their own key, so nobody uses up your free quota.
+4. The application supports user-provided Gemini API keys. Demo results can be accessed without an API key. API credentials are not stored in the public repository. Users supplying their own keys are responsible for their API usage.
 
 ## Project layout
 
@@ -51,22 +55,9 @@ copilot/evaluation.py   Agreement, kappa, precision, recall, time saved
 copilot/data_io.py      CSV loading and column detection
 tests/                  Offline tests with a fake model
 data/                   Sample reviews and the 50-row labelling sheet
-LEARN.md                Every concept explained, plus interview prep
 ```
 
 ## Data
 
 The sample comes from *Android Apps and User Feedback: a Dataset for Software Evolution and Quality Improvement* by Grano, Di Sorbo, Mercaldo, Visaggio, Canfora and Panichella (University of Zurich and University of Sannio), https://github.com/sealuzh/user_quality. 200 English reviews of Google Authenticator (2016 to 2017) were sampled with the original star-rating mix kept, and lightly cleaned.
 
-## Results
-
-Fill this in from the Accuracy check tab after your run:
-
-| Measure | Value |
-|---|---|
-| Reviews analysed | 200 |
-| Agreement with human labels (50 reviews) | _%_ |
-| Cohen's kappa | _ |
-| Manual triage time (projected for 200) | _ min |
-| Copilot time | _ min |
-| Top-ranked problem | _ |
