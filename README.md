@@ -1,4 +1,5 @@
 # AI Customer Insights Copilot
+Live App: https://ai-customer-insights-copilot-cbmyq4gbpdvludcajf5aed.streamlit.app/
 
 Product managers get hundreds of reviews and support tickets. Reading them all takes hours, and patterns get missed. This web app turns a CSV of customer feedback into a ranked list of product problems, backed by real customer quotes, and drafts a one-page PRD for the problem you pick. It also measures its own accuracy against labels a human gives it.
 
