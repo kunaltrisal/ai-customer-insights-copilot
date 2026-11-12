@@ -6,6 +6,9 @@ import json
 import os
 from pathlib import Path
 
+import io
+from docx import Document
+
 import altair as alt
 import pandas as pd
 import streamlit as st
@@ -23,6 +26,26 @@ SAMPLE_CSV = ROOT / "data" / "google_authenticator_reviews.csv"
 SAMPLE_LABELS = ROOT / "data" / "labeling_sheet_50.csv"
 SAVED_DEMO = ROOT / "data" / "sample_analysis.json"
 BAR_COLOR = "#4C6FFF"
+
+def prd_to_docx(md_text: str) -> bytes:
+    doc = Document()
+    for line in md_text.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        if s.startswith("### "):
+            doc.add_heading(s[4:].replace("**", ""), level=3)
+        elif s.startswith("## "):
+            doc.add_heading(s[3:].replace("**", ""), level=2)
+        elif s.startswith("# "):
+            doc.add_heading(s[2:].replace("**", ""), level=1)
+        elif s.startswith(("- ", "* ")):
+            doc.add_paragraph(s[2:].replace("**", "").replace("*", ""), style="List Bullet")
+        else:
+            doc.add_paragraph(s.replace("**", "").replace("*", ""))
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
 
 st.set_page_config(page_title="AI Customer Insights Copilot", layout="wide")
 ss = st.session_state
@@ -205,6 +228,12 @@ with tab_prd:
         with st.container(border=True):
             st.markdown(md)
         st.download_button("Download PRD (.md)", md, f"PRD_{name_of[pick][:40].replace(' ', '_')}.md", "text/markdown")
+        st.download_button(
+            "Download PRD (.docx)",
+            prd_to_docx(md),
+            f"PRD_{name_of[pick][:40].replace(' ', '_')}.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
 
 # ---------------- 5. Accuracy check ----------------
 with tab_acc:
